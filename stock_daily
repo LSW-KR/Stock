@@ -1,0 +1,75 @@
+from pykrx import stock
+import pandas as pd
+import FinanceDataReader as fdr
+import datetime
+import mariadb
+import time
+from datetime import datetime
+
+#def main():
+
+
+def make_sql():
+    try:
+        sql = """
+        INSERT INTO stock_daily.stock_daily  (날짜, 종목코드, 시가, 고가, 저가, 종가, 거래량) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """
+        return sql
+
+    except:
+        print("make_sql()error")
+
+
+def db_connect():
+
+    conn = mariadb.connect(
+    user='eBEST_MS', 
+    password='eBEST_MS1!', 
+    database='stock_daily', 
+    host='175.193.254.239',
+    port=9926)
+    return conn
+
+
+def que_sql(sql,conn,df):
+    #try:
+    data = list(df.itertuples(index = False, name= None))
+    cs = conn.cursor()
+    cs.executemany(sql, data)
+    conn.commit()
+    #except:
+    #    print("que_sql()error")
+
+def main():
+
+    stocks = fdr.StockListing('KOSPI') 
+    stocks = stocks.append(fdr.StockListing('KOSDAQ'))
+    symbol_list = stocks['Symbol'].to_list()
+    
+    count = 0
+    for t in symbol_list:
+        if t.isdigit():
+            try:
+                df_temp = stock.get_market_ohlcv("20220201", "20220621", t)
+                df_temp = df_temp.assign(종목코드 = t)
+                df_temp.reset_index(inplace= True)
+                col = ['날짜','종목코드','시가','고가','저가','종가','거래량']
+                df = df_temp.reindex(columns= col)
+                df['날짜'] = pd.to_datetime(df['날짜'])
+                df['날짜'] = df['날짜'].dt.strftime("%Y%m%d")
+                print("processing..."+ t)
+                que_sql(make_sql(),db_connect(),df)
+                print("inserted..."+ t)
+                count += 1
+                if count%100 == 0:
+                    print("sleeping...............")
+                    time.sleep(30)
+            except:
+                time.sleep(1)
+                continue
+        else:
+            continue
+
+        
+
+main()
