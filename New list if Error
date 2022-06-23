@@ -1,0 +1,17 @@
+from pykrx import stock
+import pandas as pd
+import FinanceDataReader as fdr
+import datetime
+import mariadb
+import time
+from datetime import datetime
+
+df = pd.DataFrame
+df.stock = stock
+
+stocks = fdr.StockListing('KOSPI') 
+stocks = stocks.append(fdr.StockListing('KOSDAQ'))
+symbol_list = stocks['Symbol'].to_list()
+#symbol_list_temp = symbol_list[2130:]
+print(symbol_list[-1])
+#symbol_list.index("238490")
