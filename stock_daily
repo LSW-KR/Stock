@@ -5,10 +5,24 @@ import datetime
 import mariadb
 import time
 from datetime import datetime
+import telepot 
 
-#def main():
 
 
+t_time = datetime.now().strftime('%H:%M:%S')
+
+token = '5479844668:AAHGlOs3AGR-mStrLJx_IUxQpH7bUSfH3Os'
+mc = 5215324812
+bot = telepot.Bot(token)
+info = bot.getMe()
+
+#****************************************************날짜 설정(YY/mm/dd) -> sdate: 시작 날짜, edate: 마지막 날짜 
+sdate = datetime.strptime("20200101", "%Y%m%d")
+edate = datetime.strptime("20201231", "%Y%m%d")
+
+
+
+#SQL INSERT
 def make_sql():
     try:
         sql = """
@@ -17,8 +31,22 @@ def make_sql():
         return sql
 
     except:
-        print("make_sql()error")
+        print("del_sql()error")
 
+#SQL 데이터 지우기
+def del_sql(conn):
+    try:
+        sql = """
+        delete
+        FROM stock_daily
+        WHERE 날짜 LIKE "2020%"
+        """
+        cs = conn.cursor()
+        cs.execute(sql)
+        conn.commit()
+        
+    except:
+        print("make_sql()error")
 
 def db_connect():
 
@@ -31,6 +59,7 @@ def db_connect():
     return conn
 
 
+
 def que_sql(sql,conn,df):
     #try:
     data = list(df.itertuples(index = False, name= None))
@@ -40,17 +69,32 @@ def que_sql(sql,conn,df):
     #except:
     #    print("que_sql()error")
 
+
+#IP Block 확인용
+def check(t, sdate, tdate):
+    df = pd.DataFrame
+    df = fdr.DataReader(t,sdate,tdate)
+    print("check in progress...")
+    print(df['Open'].values[0],"Error: value exist, IP blocked")
+
+
+#*************************************************에러시 symbol_list 인덱스 값 변경하기!
 def main():
 
     stocks = fdr.StockListing('KOSPI') 
     stocks = stocks.append(fdr.StockListing('KOSDAQ'))
     symbol_list = stocks['Symbol'].to_list()
+    #symbol_list = symbol_list[7696:]
     
+
     count = 0
+
     for t in symbol_list:
-        if t.isdigit():
-            try:
-                df_temp = stock.get_market_ohlcv("20220201", "20220621", t)
+
+        if t.isdigit(): #알파벳 포함한 종목 넘기기
+            try: #데이터가 없는 종목 넘기기
+                df_temp = stock.get_market_ohlcv(sdate, edate, t)
+
                 df_temp = df_temp.assign(종목코드 = t)
                 df_temp.reset_index(inplace= True)
                 col = ['날짜','종목코드','시가','고가','저가','종가','거래량']
@@ -61,15 +105,28 @@ def main():
                 que_sql(make_sql(),db_connect(),df)
                 print("inserted..."+ t)
                 count += 1
+                time.sleep
+                
                 if count%100 == 0:
+                    print(count,"/",len(symbol_list),"completed....")
+                    
                     print("sleeping...............")
-                    time.sleep(30)
+                    time.sleep(40)
             except:
-                time.sleep(1)
-                continue
+                    try:
+                        check(t,sdate,edate)
+                        print("program stopped at "+ t)
+                        print("start again with symbol_list[]", symbol_list.index(t))
+                        
+                        exit()
+                    except:
+                        count +=1
+                        time.sleep(1)
+                        continue
+
+                
         else:
             continue
 
-        
-
 main()
+#del_sql(db_connect())
