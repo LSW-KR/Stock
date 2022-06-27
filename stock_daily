@@ -7,7 +7,7 @@ import time
 from datetime import datetime
 import telepot 
 
-
+#실행 전 주의: 날짜변경, symbolList 확인 
 
 t_time = datetime.now().strftime('%H:%M:%S')
 
@@ -17,8 +17,8 @@ bot = telepot.Bot(token)
 info = bot.getMe()
 
 #****************************************************날짜 설정(YY/mm/dd) -> sdate: 시작 날짜, edate: 마지막 날짜 
-sdate = datetime.strptime("20200101", "%Y%m%d")
-edate = datetime.strptime("20201231", "%Y%m%d")
+sdate = datetime.strptime("20220622", "%Y%m%d")
+edate = datetime.strptime("20220625", "%Y%m%d")
 
 
 
@@ -39,12 +39,11 @@ def del_sql(conn):
         sql = """
         delete
         FROM stock_daily
-        WHERE 날짜 LIKE "2020%"
+        WHERE 날짜 LIKE "202206%"
         """
         cs = conn.cursor()
         cs.execute(sql)
         conn.commit()
-        
     except:
         print("make_sql()error")
 
@@ -57,7 +56,6 @@ def db_connect():
     host='175.193.254.239',
     port=9926)
     return conn
-
 
 
 def que_sql(sql,conn,df):
@@ -75,16 +73,17 @@ def check(t, sdate, tdate):
     df = pd.DataFrame
     df = fdr.DataReader(t,sdate,tdate)
     print("check in progress...")
-    print(df['Open'].values[0],"Error: value exist, IP blocked")
+    print(df['Open'].values[0],"Error: Value exist, Assumption:Blocked")
 
 
-#*************************************************에러시 symbol_list 인덱스 값 변경하기!
+
 def main():
-
     stocks = fdr.StockListing('KOSPI') 
     stocks = stocks.append(fdr.StockListing('KOSDAQ'))
     symbol_list = stocks['Symbol'].to_list()
-    #symbol_list = symbol_list[7696:]
+    #*************************************************에러시 symbol_list 인덱스 값 변경하기!
+    #symbol_list = symbol_list[:]
+    
     
 
     count = 0
@@ -115,16 +114,14 @@ def main():
             except:
                     try:
                         check(t,sdate,edate)
-                        print("program stopped at "+ t)
-                        print("start again with symbol_list[]", symbol_list.index(t))
-                        
-                        exit()
+                        print("Program stopped at "+ t)
+                        print("Start again with symbol_list["+str(symbol_list.index(t))+"]")
+                        bot.sendMessage(chat_id = mc , text ="Error: /Stock_daily : Start again with symbol_list["+ str(symbol_list.index(t))+"]")
+                        quit()
                     except:
                         count +=1
                         time.sleep(1)
                         continue
-
-                
         else:
             continue
 
