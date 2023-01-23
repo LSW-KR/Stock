@@ -11,8 +11,9 @@ import telepot
 
 t_time = datetime.now().strftime('%H:%M:%S')
 
-token = '5479844668:AAHGlOs3AGR-mStrLJx_IUxQpH7bUSfH3Os'
-mc = 5215324812
+#insert token number, mc
+token = '###############################'
+mc = ################
 bot = telepot.Bot(token)
 info = bot.getMe()
 
@@ -51,10 +52,10 @@ def db_connect():
 
     conn = mariadb.connect(
     user='eBEST_MS', 
-    password='eBEST_MS1!', 
+    password='########', 
     database='stock_daily', 
-    host='175.193.254.239',
-    port=9926)
+    host='############',
+    port=####)
     return conn
 
 
