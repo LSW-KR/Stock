@@ -1,5 +1,6 @@
 Create_List_Error
 >This code is written in Python and is used to scrape stock market data.
+>This code is a test code to check for stock code.
 
 >> 1. First, it imports the 'pykrx' library which is a python wrapper for the Korea Exchange (KRX) website. This library is used to scrape data from KRX.
 >> 2. It also imports the 'pandas' library which is used to manipulate and analyze data.
@@ -14,7 +15,7 @@ Create_List_Error
 
 >Note: This script uses the 'FinanceDataReader' library to access the financial data of various markets. Users need to install this library before running this script. 
 It is also important to note that this script is only importing the libraries, creating a DataFrame and retrieve the stock symbols of the KOSPI and KOSDAQ markets. Any further functionality would need to be added to the script in order to utilize the data.
-This code is a test code to check for stock code.
+
 
 Stock_List
 > 1. This is Python code used for scraping historical stock market data, storing it in a MariaDB database, and sending notifications through Telegram when certain conditions are met.
