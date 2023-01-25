@@ -7,17 +7,17 @@ import time
 from datetime import datetime
 import telepot 
 
-#실행 전 주의: 날짜변경, symbolList 확인 
+#Note: Set date/time and check symbolist
 
 t_time = datetime.now().strftime('%H:%M:%S')
 
-#insert token number, mc
+#Telegram Setting
 token = '###############################'
 mc = ################
 bot = telepot.Bot(token)
 info = bot.getMe()
 
-#****************************************************날짜 설정(YY/mm/dd) -> sdate: 시작 날짜, edate: 마지막 날짜 
+#Set date (YY/mm/dd) -> sdate: startdate, edate: end date 
 sdate = datetime.strptime("20220622", "%Y%m%d")
 edate = datetime.strptime("20220625", "%Y%m%d")
 
@@ -34,7 +34,7 @@ def make_sql():
     except:
         print("del_sql()error")
 
-#SQL 데이터 지우기
+#SQL Delete Data
 def del_sql(conn):
     try:
         sql = """
@@ -47,9 +47,9 @@ def del_sql(conn):
         conn.commit()
     except:
         print("make_sql()error")
-
+        
+#DB connection setting
 def db_connect():
-
     conn = mariadb.connect(
     user='eBEST_MS', 
     password='########', 
@@ -57,8 +57,8 @@ def db_connect():
     host='############',
     port=####)
     return conn
-
-
+    
+#Que SQL
 def que_sql(sql,conn,df):
     #try:
     data = list(df.itertuples(index = False, name= None))
@@ -69,7 +69,7 @@ def que_sql(sql,conn,df):
     #    print("que_sql()error")
 
 
-#IP Block 확인용
+#Check if Error running
 def check(t, sdate, tdate):
     df = pd.DataFrame
     df = fdr.DataReader(t,sdate,tdate)
@@ -77,22 +77,22 @@ def check(t, sdate, tdate):
     print(df['Open'].values[0],"Error: Value exist, Assumption:Blocked")
 
 
-
+#Main
 def main():
     stocks = fdr.StockListing('KOSPI') 
     stocks = stocks.append(fdr.StockListing('KOSDAQ'))
     symbol_list = stocks['Symbol'].to_list()
-    #*************************************************에러시 symbol_list 인덱스 값 변경하기!
+    
+    #Change symbol_list index value if ERROR occurs
     #symbol_list = symbol_list[:]
     
-    
-
     count = 0
 
     for t in symbol_list:
 
-        if t.isdigit(): #알파벳 포함한 종목 넘기기
-            try: #데이터가 없는 종목 넘기기
+        if t.isdigit():
+            #Skip stock market without data
+            try: 
                 df_temp = stock.get_market_ohlcv(sdate, edate, t)
 
                 df_temp = df_temp.assign(종목코드 = t)
@@ -109,7 +109,6 @@ def main():
                 
                 if count%100 == 0:
                     print(count,"/",len(symbol_list),"completed....")
-                    
                     print("sleeping...............")
                     time.sleep(40)
             except:
