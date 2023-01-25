@@ -9,6 +9,7 @@ from datetime import datetime
 df = pd.DataFrame
 df.stock = stock
 
+
 stocks = fdr.StockListing('KOSPI') 
 stocks = stocks.append(fdr.StockListing('KOSDAQ'))
 symbol_list = stocks['Symbol'].to_list()
