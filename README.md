@@ -20,13 +20,8 @@ Stock_List
 > 1. This is Python code used for scraping historical stock market data, storing it in a MariaDB database, and sending notifications through Telegram when certain conditions are met.
 > 2. The code uses several libraries, including pykrx, pandas, FinanceDataReader, and telepot, to accomplish its tasks.
 > 3. The pykrx library is used to scrape historical stock market data from the KRX (Korea Exchange) website. The FinanceDataReader library is used to retrieve the list of symbols for the KOSPI and KOSDAQ stock markets.
-
 > 4. The pandas library is used to manipulate the data and store it in a DataFrame. Then, the mariadb library is used to connect to a MariaDB database and insert the data into a table called "stock_daily".
-
 > 5. The telepot library is used to interact with the Telegram API to send notifications. The code uses the telepot.Bot class to create a Telegram bot and the getMe() method to retrieve information about the bot.
-
 > 6. The code also defines several functions to handle different tasks, such as connecting to the database, creating an SQL statement to insert the data, and sending notifications through Telegram.
-
 > 7. The main() function is the entry point of the script where it starts to iterate over the symbol_list, retrieve the data, manipulate it, store it to the database, and sending notifications if the Open value of the stock is exist or blocked.
-
 > 8. This script is designed to be run periodically (e.g. daily) to update the database with new stock market data.
