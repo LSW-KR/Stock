@@ -12,7 +12,21 @@ Create_List_Error
 >> 9. It then creates a list of symbols of the stock and assigns it to the variable 'symbol_list'.
 >> 10. The last line of the code prints the last item in the symbol_list.
 
->Note: This script uses the 'FinanceDataReader' library to access the financial data of various markets. Users need to install this library before running this script. Also, it is important to note that the 'mariadb' library is not being used in this script and its import is unnecessary.
-Also, the symbol_list_temp variable is not being used and can be removed.
+>Note: This script uses the 'FinanceDataReader' library to access the financial data of various markets. Users need to install this library before running this script. 
 It is also important to note that this script is only importing the libraries, creating a DataFrame and retrieve the stock symbols of the KOSPI and KOSDAQ markets. Any further functionality would need to be added to the script in order to utilize the data.
-This code is a test code to check for stock code
+This code is a test code to check for stock code.
+
+Stock_List
+>1. This is Python code used for scraping historical stock market data, storing it in a MariaDB database, and sending notifications through Telegram when certain conditions are met.
+2. The code uses several libraries, including pykrx, pandas, FinanceDataReader, and telepot, to accomplish its tasks.
+3. The pykrx library is used to scrape historical stock market data from the KRX (Korea Exchange) website. The FinanceDataReader library is used to retrieve the list of symbols for the KOSPI and KOSDAQ stock markets.
+
+4. The pandas library is used to manipulate the data and store it in a DataFrame. Then, the mariadb library is used to connect to a MariaDB database and insert the data into a table called "stock_daily".
+
+5. The telepot library is used to interact with the Telegram API to send notifications. The code uses the telepot.Bot class to create a Telegram bot and the getMe() method to retrieve information about the bot.
+
+6. The code also defines several functions to handle different tasks, such as connecting to the database, creating an SQL statement to insert the data, and sending notifications through Telegram.
+
+7. The main() function is the entry point of the script where it starts to iterate over the symbol_list, retrieve the data, manipulate it, store it to the database, and sending notifications if the Open value of the stock is exist or blocked.
+
+8. This script is designed to be run periodically (e.g. daily) to update the database with new stock market data.
